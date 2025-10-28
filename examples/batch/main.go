@@ -113,7 +113,7 @@ func processFile(ctx context.Context, client *bsubio.BsubClient, jobType, filePa
 		return result
 	}
 
-	result.jobID = jobResult.Job.Id.String()
+	result.jobID = *jobResult.Job.Id
 	result.output = jobResult.Output
 	result.outputSize = len(jobResult.Output)
 

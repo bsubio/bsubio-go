@@ -2,7 +2,7 @@ module github.com/bsubio/bsubio-go
 
 go 1.25.0
 
-require github.com/oapi-codegen/runtime v1.1.2
+require github.com/oapi-codegen/runtime v1.1.2 // Will be updated by go mod tidy
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect

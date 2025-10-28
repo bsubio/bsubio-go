@@ -54,7 +54,7 @@ func main() {
 	if listResp.JSON200 != nil && listResp.JSON200.Data != nil && listResp.JSON200.Data.Jobs != nil {
 		for _, job := range *listResp.JSON200.Data.Jobs {
 			fmt.Printf("  Job %s: %s (type: %s)\n",
-				job.Id,
+				*job.Id,
 				*job.Status,
 				*job.Type,
 			)
@@ -81,7 +81,7 @@ func main() {
 		}
 
 		fmt.Printf("Job completed successfully!\n")
-		fmt.Printf("Job ID: %s\n", result.Job.Id)
+		fmt.Printf("Job ID: %s\n", *result.Job.Id)
 		if result.Job.DataSize != nil {
 			fmt.Printf("Data size: %d bytes\n", *result.Job.DataSize)
 		}

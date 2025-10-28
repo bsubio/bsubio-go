@@ -1,11 +1,14 @@
 package bsubio
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"os"
+	"time"
 )
 
 // BsubClient wraps the generated API client with helper methods
@@ -89,10 +92,26 @@ func (c *BsubClient) CreateAndSubmitJob(ctx context.Context, jobType string, dat
 		return nil, fmt.Errorf("no upload token in response")
 	}
 
-	// Upload data
+	// Upload data as multipart form
+	var buf bytes.Buffer
+	writer := multipart.NewWriter(&buf)
+
+	part, err := writer.CreateFormFile("file", "upload")
+	if err != nil {
+		return nil, fmt.Errorf("failed to create form file: %w", err)
+	}
+
+	if _, err := io.Copy(part, data); err != nil {
+		return nil, fmt.Errorf("failed to copy data: %w", err)
+	}
+
+	if err := writer.Close(); err != nil {
+		return nil, fmt.Errorf("failed to close writer: %w", err)
+	}
+
 	uploadResp, err := c.UploadJobDataWithBodyWithResponse(ctx, *job.Id, &UploadJobDataParams{
 		Token: *job.UploadToken,
-	}, "application/octet-stream", data)
+	}, writer.FormDataContentType(), &buf)
 	if err != nil {
 		return nil, fmt.Errorf("failed to upload data: %w", err)
 	}
@@ -158,8 +177,8 @@ func (c *BsubClient) WaitForJob(ctx context.Context, jobID JobId) (*Job, error) 
 		select {
 		case <-ctx.Done():
 			return nil, ctx.Err()
-		case <-ctx.Done():
-			return nil, ctx.Err()
+		case <-time.After(2 * time.Second):
+			// Continue polling
 		}
 	}
 }
