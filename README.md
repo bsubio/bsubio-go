@@ -45,7 +45,7 @@ func main() {
         log.Fatal(err)
     }
 
-    fmt.Printf("Job completed: %s\n", result.Job.Id)
+    fmt.Printf("Job completed: %s\n", *result.Job.Id)
     fmt.Printf("Output: %s\n", string(result.Output))
 }
 ```
@@ -114,35 +114,26 @@ os.WriteFile("output.md", result.Output, 0644)
 For more control, use the individual methods:
 
 ```go
-// 1. Create job
-createResp, err := client.CreateJobWithResponse(ctx, bsubio.CreateJobJSONRequestBody{
-    Type: "pandoc_md",
-})
-if err != nil {
-    log.Fatal(err)
-}
-job := createResp.JSON201.Data
-
-// 2. Upload data
+// 1. Create and submit job (with file upload)
 file, _ := os.Open("document.pdf")
 defer file.Close()
 
-uploadResp, err := client.UploadJobDataWithBodyWithResponse(
-    ctx,
-    *job.Id,
-    &bsubio.UploadJobDataParams{Token: *job.UploadToken},
-    "application/octet-stream",
-    file,
-)
+job, err := client.CreateAndSubmitJob(ctx, "pandoc_md", file)
+if err != nil {
+    log.Fatal(err)
+}
 
-// 3. Submit job for processing
-submitResp, err := client.SubmitJobWithResponse(ctx, *job.Id)
-
-// 4. Wait for completion
+// 2. Wait for completion
 finishedJob, err := client.WaitForJob(ctx, *job.Id)
+if err != nil {
+    log.Fatal(err)
+}
 
-// 5. Get results
+// 3. Get results
 result, err := client.GetJobResult(ctx, *job.Id)
+if err != nil {
+    log.Fatal(err)
+}
 ```
 
 ### List Jobs
@@ -154,12 +145,12 @@ if err != nil {
     log.Fatal(err)
 }
 
-for _, job := range resp.JSON200.Data.Jobs {
-    fmt.Printf("Job %s: %s\n", job.Id, *job.Status)
+for _, job := range *resp.JSON200.Data.Jobs {
+    fmt.Printf("Job %s: %s\n", *job.Id, *job.Status)
 }
 
 // Filter by status
-status := bsubio.ListJobsParamsStatusFinished
+status := "finished"
 limit := 10
 resp, err = client.ListJobsWithResponse(ctx, &bsubio.ListJobsParams{
     Status: &status,
@@ -236,7 +227,7 @@ if err != nil {
     log.Fatal(err)
 }
 
-for _, procType := range resp.JSON200.Types {
+for _, procType := range *resp.JSON200.Types {
     fmt.Printf("%s: %s\n", *procType.Name, *procType.Description)
 }
 ```
@@ -264,14 +255,14 @@ Use `GetTypes()` to get the current list of available types from the server.
 
 Jobs progress through these states:
 
-- `Created` - Job created, awaiting data upload
-- `Loaded` - Data uploaded successfully
-- `Pending` - Waiting in queue for a worker
-- `Claimed` - Worker claimed the job
-- `Preparing` - Worker preparing to process
-- `InProgress` - Processing started
-- `Finished` - Processing completed successfully
-- `Failed` - Processing failed with error
+- `created` - Job created, awaiting data upload
+- `loaded` - Data uploaded successfully
+- `pending` - Waiting in queue for a worker
+- `claimed` - Worker claimed the job
+- `preparing` - Worker preparing to process
+- `in_progress` - Processing started
+- `finished` - Processing completed successfully
+- `failed` - Processing failed with error
 
 ## Error Handling
 
@@ -344,10 +335,9 @@ All OpenAPI operations are available with `*WithResponse` suffix:
 
 See the [examples](examples/) directory for complete working examples:
 
-- [Basic usage](examples/basic/main.go)
-- [Batch processing](examples/batch/main.go)
-- [Error handling](examples/error-handling/main.go)
-- [Custom workflow](examples/custom-workflow/main.go)
+- [Basic usage](examples/basic/main.go) - Simple file processing
+- [Batch processing](examples/batch/main.go) - Process multiple files concurrently
+- [Custom workflow](examples/custom-workflow/main.go) - Step-by-step job control
 
 ## Development
 
