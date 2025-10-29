@@ -52,20 +52,16 @@ func main() {
 }
 ```
 
-For more example, see `examples/`.
+For more examples, see [examples/](examples/) directory:
+- [Basic usage](examples/basic/main.go) - Simple file processing
+- [Batch processing](examples/batch/main.go) - Process multiple files concurrently
+- [Custom workflow](examples/custom-workflow/main.go) - Step-by-step job control
+
 You should be able to build them all by:
 
     make ex
 
 Binaries will be in `bin/`.
-
-## Examples
-
-See the [examples](examples/) directory for complete working examples:
-
-- [Basic usage](examples/basic/main.go) - Simple file processing
-- [Batch processing](examples/batch/main.go) - Process multiple files concurrently
-- [Custom workflow](examples/custom-workflow/main.go) - Step-by-step job control
 
 ## Development
 
