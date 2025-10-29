@@ -62,8 +62,23 @@ See the [examples](examples/) directory for complete working examples:
 
 ## Development
 
+You must have Go 1.24+ installed.
+Most Linux/macOS distributions have this.
+Go to https://go.dev/doc/install to learn more.
+
+Then:
+
     make
     make test
+
+This SDK is based on bsubio.io OpenAPI specification available at:
+
+    https://app.bsub.io/static/openapi.yaml
+
+You need OpenAPI compiler: https://github.com/oapi-codegen/oapi-codegen
+Just install it with:
+
+    make setup
 
 To regenerate the code from public OpenAPI specs:
 
