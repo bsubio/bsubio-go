@@ -4,7 +4,7 @@ build:
 	go build
 
 regen:
-	go tool oapi-codegen -config .oapi-codegen.yaml https://app.bsub.io/static/openapi.yaml 
+	go tool oapi-codegen -config ./.oapi-codegen.yaml https://app.bsub.io/static/openapi.yaml 
 
 test:
 	go test ./...

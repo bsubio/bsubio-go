@@ -28,10 +28,10 @@ const (
 	JobStatusCreated    JobStatus = "created"
 	JobStatusFailed     JobStatus = "failed"
 	JobStatusFinished   JobStatus = "finished"
-	JobStatusInProgress JobStatus = "in_progress"
 	JobStatusLoaded     JobStatus = "loaded"
 	JobStatusPending    JobStatus = "pending"
 	JobStatusPreparing  JobStatus = "preparing"
+	JobStatusProcessing JobStatus = "processing"
 )
 
 // Defines values for ListJobsParamsStatus.
@@ -40,10 +40,10 @@ const (
 	ListJobsParamsStatusCreated    ListJobsParamsStatus = "created"
 	ListJobsParamsStatusFailed     ListJobsParamsStatus = "failed"
 	ListJobsParamsStatusFinished   ListJobsParamsStatus = "finished"
-	ListJobsParamsStatusInProgress ListJobsParamsStatus = "in_progress"
 	ListJobsParamsStatusLoaded     ListJobsParamsStatus = "loaded"
 	ListJobsParamsStatusPending    ListJobsParamsStatus = "pending"
 	ListJobsParamsStatusPreparing  ListJobsParamsStatus = "preparing"
+	ListJobsParamsStatusProcessing ListJobsParamsStatus = "processing"
 )
 
 // Error defines model for Error.
@@ -76,8 +76,8 @@ type Job struct {
 	// FinishedAt When job finished (success or failure)
 	FinishedAt *time.Time `json:"finished_at"`
 
-	// Id Unique job identifier (UUID without hyphens)
-	Id *string `json:"id,omitempty"`
+	// Id Unique job identifier
+	Id *openapi_types.UUID `json:"id,omitempty"`
 
 	// Status Current job status
 	Status *JobStatus `json:"status,omitempty"`
@@ -88,7 +88,7 @@ type Job struct {
 	// UpdatedAt Last update timestamp
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 
-	// UploadToken Token for uploading data (only present in Created state)
+	// UploadToken Token for uploading data (only present in `created` state)
 	UploadToken *string `json:"upload_token,omitempty"`
 
 	// UserId User who created the job
@@ -111,7 +111,7 @@ type ProcessingType struct {
 }
 
 // JobId defines model for JobId.
-type JobId = string
+type JobId = openapi_types.UUID
 
 // BadRequest defines model for BadRequest.
 type BadRequest = Error
@@ -261,7 +261,7 @@ type ClientInterface interface {
 	GetTypes(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UploadJobDataWithBody request with any body
-	UploadJobDataWithBody(ctx context.Context, jobId string, params *UploadJobDataParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UploadJobDataWithBody(ctx context.Context, jobId openapi_types.UUID, params *UploadJobDataParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetVersion request
 	GetVersion(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -387,7 +387,7 @@ func (c *Client) GetTypes(ctx context.Context, reqEditors ...RequestEditorFn) (*
 	return c.Client.Do(req)
 }
 
-func (c *Client) UploadJobDataWithBody(ctx context.Context, jobId string, params *UploadJobDataParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) UploadJobDataWithBody(ctx context.Context, jobId openapi_types.UUID, params *UploadJobDataParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUploadJobDataRequestWithBody(c.Server, jobId, params, contentType, body)
 	if err != nil {
 		return nil, err
@@ -748,7 +748,7 @@ func NewGetTypesRequest(server string) (*http.Request, error) {
 }
 
 // NewUploadJobDataRequestWithBody generates requests for UploadJobData with any type of body
-func NewUploadJobDataRequestWithBody(server string, jobId string, params *UploadJobDataParams, contentType string, body io.Reader) (*http.Request, error) {
+func NewUploadJobDataRequestWithBody(server string, jobId openapi_types.UUID, params *UploadJobDataParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -901,7 +901,7 @@ type ClientWithResponsesInterface interface {
 	GetTypesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTypesResponse, error)
 
 	// UploadJobDataWithBodyWithResponse request with any body
-	UploadJobDataWithBodyWithResponse(ctx context.Context, jobId string, params *UploadJobDataParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UploadJobDataResponse, error)
+	UploadJobDataWithBodyWithResponse(ctx context.Context, jobId openapi_types.UUID, params *UploadJobDataParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UploadJobDataResponse, error)
 
 	// GetVersionWithResponse request
 	GetVersionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetVersionResponse, error)
@@ -1290,7 +1290,7 @@ func (c *ClientWithResponses) GetTypesWithResponse(ctx context.Context, reqEdito
 }
 
 // UploadJobDataWithBodyWithResponse request with arbitrary body returning *UploadJobDataResponse
-func (c *ClientWithResponses) UploadJobDataWithBodyWithResponse(ctx context.Context, jobId string, params *UploadJobDataParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UploadJobDataResponse, error) {
+func (c *ClientWithResponses) UploadJobDataWithBodyWithResponse(ctx context.Context, jobId openapi_types.UUID, params *UploadJobDataParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UploadJobDataResponse, error) {
 	rsp, err := c.UploadJobDataWithBody(ctx, jobId, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
