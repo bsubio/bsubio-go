@@ -1,0 +1,8 @@
+package: bsubio
+generate:
+  client: true
+  models: true
+  embedded-spec: false
+output: client.gen.go
+compatibility:
+  always-prefix-enum-values: true
