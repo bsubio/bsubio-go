@@ -1,6 +1,8 @@
-# BSUB.IO Go SDK
+# Go SDK for bsub.io
 
-Official Go SDK for the [BSUB.IO](https://bsub.io) API - Batch processing for compute-intensive workloads.
+Official Golang SDK for the [BSUB.IO](https://bsub.io) API.
+
+You can use it to build Golang apps for data processing.
 
 ## Features
 
