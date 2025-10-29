@@ -17,6 +17,8 @@ Official Go SDK for the [BSUB.IO](https://bsub.io) API - Batch processing for co
 
 ## Quick Start
 
+Simple example:
+
 ```go
 package main
 
@@ -51,6 +53,11 @@ func main() {
 ```
 
 For more example, see `examples/`.
+You should be able to build them all by:
+
+    make ex
+
+Binaries will be in `bin/`.
 
 ## Examples
 

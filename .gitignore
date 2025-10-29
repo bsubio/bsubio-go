@@ -31,3 +31,5 @@ Thumbs.db
 # Example output files
 examples/**/*.out
 examples/**/output.*
+
+bin/*
