@@ -1,15 +1,13 @@
+all: build
 
-```bash
-oapi-codegen -config .oapi-codegen.yaml openapi.yaml
-```
-### Building
+build:
+	go build
 
-```bash
-go build
-```
+regen:
+	go tool oapi-codegen -config .oapi-codegen.yaml https://app.bsub.io/static/openapi.yaml 
 
-### Testing
+test:
+	go test ./...
 
-```bash
-go test ./...
-```
+setup:
+	go get -tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
