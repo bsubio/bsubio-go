@@ -10,7 +10,7 @@ test:
 	go test ./...
 
 setup:
-	go get -tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+	go get -tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.5.0
 
 ex:
 	mkdir -p bin/
