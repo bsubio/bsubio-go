@@ -1,4 +1,6 @@
-# Go SDK for bsub.io
+# Go SDK for bsub.io (BETA)
+
+[we're early project; anything here can change withtout a warning until we push v1]
 
 Official Golang SDK for the [BSUB.IO](https://bsub.io) API.
 
