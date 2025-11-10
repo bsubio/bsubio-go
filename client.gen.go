@@ -103,8 +103,8 @@ type ProcessingType struct {
 	// Description Human-readable description
 	Description *string `json:"description,omitempty"`
 
-	// Mime MIME type of the output
-	Mime *string `json:"mime,omitempty"`
+	// Mime MIME types of the output
+	Mime *[]string `json:"mime,omitempty"`
 
 	// Type Type identifier used when creating jobs
 	Type *string `json:"type,omitempty"`
