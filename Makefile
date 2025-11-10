@@ -1,16 +1,12 @@
 all: build
 
 build:
-	go build
-
-regen:
+	go get -tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.5.0
 	go tool oapi-codegen -config ./.oapi-codegen.yaml ../app.bsub.io/static/openapi.yaml
+	go build
 
 test:
 	go test ./...
-
-setup:
-	go get -tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.5.0
 
 ex:
 	mkdir -p bin/
