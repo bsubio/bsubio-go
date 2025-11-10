@@ -103,11 +103,11 @@ type ProcessingType struct {
 	// Description Human-readable description
 	Description *string `json:"description,omitempty"`
 
-	// Name Type identifier used when creating jobs
-	Name *string `json:"name,omitempty"`
+	// Mime MIME type of the output
+	Mime *string `json:"mime,omitempty"`
 
-	// Timeout Processing timeout in seconds
-	Timeout *int `json:"timeout,omitempty"`
+	// Type Type identifier used when creating jobs
+	Type *string `json:"type,omitempty"`
 }
 
 // JobId defines model for JobId.
