@@ -43,10 +43,7 @@ import (
 
 func main() {
     // Load configuration (reads from ~/.config/bsubio/config.json or BSUBIO_API_KEY env var)
-    config, err := bsubio.LoadConfig()
-    if err != nil {
-        log.Fatal(err)
-    }
+    config := bsubio.LoadConfig()
 
     // Create client
     client, err := bsubio.NewBsubClient(config)
