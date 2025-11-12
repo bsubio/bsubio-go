@@ -23,10 +23,9 @@ You can use it to build Golang apps for data processing.
 
 ### Getting an API Key
 
-You have two options to get your API key:
-
-1. **Register via CLI** (recommended): Run `bsubio register` to create an account and automatically configure your credentials
-2. **Register via Web**: Visit [https://bsub.io](https://bsub.io) to create an account and get your API key
+Our CLI will create you `~/.config/bsubio/config.json` automatically.
+Visit https://www.bsub.io and follow the installation steps to get `bsubio` to work for you.
+Then `bsubio register` should give you new account with API key created.
 
 ### Simple Example
 
