@@ -21,7 +21,14 @@ You can use it to build Golang apps for data processing.
 
 ## Quick Start
 
-Simple example:
+### Getting an API Key
+
+You have two options to get your API key:
+
+1. **Register via CLI** (recommended): Run `bsubio register` to create an account and automatically configure your credentials
+2. **Register via Web**: Visit [https://bsub.io](https://bsub.io) to create an account and get your API key
+
+### Simple Example
 
 ```go
 package main
@@ -35,10 +42,14 @@ import (
 )
 
 func main() {
+    // Load configuration (reads from ~/.config/bsubio/config.json or BSUBIO_API_KEY env var)
+    config, err := bsubio.LoadConfig()
+    if err != nil {
+        log.Fatal(err)
+    }
+
     // Create client
-    client, err := bsubio.NewBsubClient(bsubio.Config{
-        APIKey: "your-api-key",
-    })
+    client, err := bsubio.NewBsubClient(config)
     if err != nil {
         log.Fatal(err)
     }
