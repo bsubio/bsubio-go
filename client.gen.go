@@ -103,8 +103,35 @@ type ProcessingType struct {
 	// Description Human-readable description
 	Description *string `json:"description,omitempty"`
 
-	// Mime MIME types of the output
-	Mime *[]string `json:"mime,omitempty"`
+	// Example Example usage information
+	Example *struct {
+		// Cmd Example command
+		Cmd *string `json:"cmd,omitempty"`
+
+		// Desc Example description
+		Desc *string `json:"desc,omitempty"`
+	} `json:"example,omitempty"`
+
+	// Input Input format information
+	Input *struct {
+		// MimeIn Accepted input MIME types
+		MimeIn *[]string `json:"mime_in,omitempty"`
+	} `json:"input,omitempty"`
+
+	// Name Human-readable name
+	Name *string `json:"name,omitempty"`
+
+	// Output Output format information
+	Output *struct {
+		// Display Display format hint
+		Display *string `json:"display,omitempty"`
+
+		// Ext Output file extension
+		Ext *string `json:"ext,omitempty"`
+
+		// MimeOut Output MIME type
+		MimeOut *string `json:"mime_out,omitempty"`
+	} `json:"output,omitempty"`
 
 	// Type Type identifier used when creating jobs
 	Type *string `json:"type,omitempty"`
