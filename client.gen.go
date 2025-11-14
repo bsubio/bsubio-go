@@ -129,8 +129,8 @@ type ProcessingType struct {
 		// Ext Output file extension
 		Ext *string `json:"ext,omitempty"`
 
-		// MimeOut Output MIME type
-		MimeOut *string `json:"mime_out,omitempty"`
+		// MimeOut Output MIME types
+		MimeOut *[]string `json:"mime_out,omitempty"`
 	} `json:"output,omitempty"`
 
 	// Type Type identifier used when creating jobs
