@@ -107,27 +107,3 @@ func SetupTestClient(t *testing.T) (*BsubClient, *MockServer, func()) {
 		return client, mockServer, func() { mockServer.Close() }
 	}
 }
-
-// GetTestAPIKey returns an API key for testing
-// In mock mode: returns a test key
-// In production mode: loads from config or environment
-func GetTestAPIKey(t *testing.T) string {
-	mode := GetTestMode()
-
-	if mode == TestModeProduction {
-		// Try environment variable first
-		if key := os.Getenv("BSUB_API_KEY"); key != "" {
-			return key
-		}
-
-		// Try config file
-		config, err := LoadBsubConfig()
-		if err != nil || config.APIKey == "" {
-			t.Skip("Skipping production test: no API key available")
-			return ""
-		}
-		return config.APIKey
-	}
-
-	return "test-api-key"
-}

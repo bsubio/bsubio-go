@@ -31,13 +31,6 @@ func NewMockServer() *MockServer {
 	return ms
 }
 
-// SetDelay sets a delay for a specific operation (e.g., "create", "submit", "poll")
-func (ms *MockServer) SetDelay(operation string, delay time.Duration) {
-	ms.mu.Lock()
-	defer ms.mu.Unlock()
-	ms.delays[operation] = delay
-}
-
 // GetJob returns a job by ID (for testing inspection)
 func (ms *MockServer) GetJob(jobID uuid.UUID) *Job {
 	ms.mu.RLock()

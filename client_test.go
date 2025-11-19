@@ -3,7 +3,6 @@ package bsubio
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -428,29 +427,6 @@ func BenchmarkCreateAndSubmitJob(b *testing.B) {
 			b.Fatal(err)
 		}
 	}
-}
-
-// Example test demonstrating the complete workflow
-func ExampleBsubClient_ProcessFile() {
-	// This example shows how to use ProcessFile for end-to-end processing
-	client, err := NewBsubClient(Config{
-		APIKey: "your-api-key",
-	})
-	if err != nil {
-		fmt.Printf("Failed to create client: %v\n", err)
-		return
-	}
-
-	ctx := context.Background()
-	result, err := client.ProcessFile(ctx, "test/linecount", "document.txt")
-	if err != nil {
-		fmt.Printf("Processing failed: %v\n", err)
-		return
-	}
-
-	fmt.Printf("Job completed with status: %s\n", *result.Job.Status)
-	fmt.Printf("Output size: %d bytes\n", len(result.Output))
-	fmt.Printf("Logs: %s\n", result.Logs)
 }
 
 // TestIntegration_RealJobTypes tests with actual job types that exist in production
