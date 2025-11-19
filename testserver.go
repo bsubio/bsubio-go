@@ -105,7 +105,7 @@ func (ms *MockServer) handleCreateJob(w http.ResponseWriter, r *http.Request) {
 	ms.mu.Unlock()
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	_ = json.NewEncoder(w).Encode(map[string]interface{}{
 		"data":    job,
 		"success": true,
 	})
@@ -140,7 +140,7 @@ func (ms *MockServer) handleUpload(w http.ResponseWriter, r *http.Request) {
 	ms.mu.Unlock()
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	_ = json.NewEncoder(w).Encode(map[string]interface{}{
 		"data_size": len(data),
 		"message":   "Upload successful",
 	})
@@ -186,7 +186,7 @@ func (ms *MockServer) handleSubmit(w http.ResponseWriter, r *http.Request) {
 
 	// Return simple success response (matching real API)
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	_ = json.NewEncoder(w).Encode(map[string]interface{}{
 		"success": true,
 		"message": "Job submitted successfully",
 	})
@@ -218,7 +218,7 @@ func (ms *MockServer) handleGetJob(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	_ = json.NewEncoder(w).Encode(map[string]interface{}{
 		"data":    job,
 		"success": true,
 	})
@@ -262,7 +262,7 @@ func (ms *MockServer) handleGetOutput(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(output))
+	_, _ = w.Write([]byte(output))
 }
 
 func (ms *MockServer) handleGetLogs(w http.ResponseWriter, r *http.Request) {
@@ -294,5 +294,5 @@ func (ms *MockServer) handleGetLogs(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(logs))
+	_, _ = w.Write([]byte(logs))
 }
