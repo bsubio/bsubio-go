@@ -1,4 +1,6 @@
-# Go SDK for bsub.io
+# Go SDK for bsub.io (BETA)
+
+[we're early project; anything here can change withtout a warning until we push v1]
 
 Official Golang SDK for the [BSUB.IO](https://bsub.io) API.
 
@@ -19,7 +21,13 @@ You can use it to build Golang apps for data processing.
 
 ## Quick Start
 
-Simple example:
+### Getting an API Key
+
+Our CLI will create you `~/.config/bsubio/config.json` automatically.
+Visit https://www.bsub.io and follow the installation steps to get `bsubio` to work for you.
+Then `bsubio register` should give you new account with API key created.
+
+### Simple Example
 
 ```go
 package main
@@ -33,10 +41,11 @@ import (
 )
 
 func main() {
+    // Load configuration (reads from ~/.config/bsubio/config.json or BSUBIO_API_KEY env var)
+    config := bsubio.LoadConfig()
+
     // Create client
-    client, err := bsubio.NewBsubClient(bsubio.Config{
-        APIKey: "your-api-key",
-    })
+    client, err := bsubio.NewBsubClient(config)
     if err != nil {
         log.Fatal(err)
     }
@@ -70,6 +79,7 @@ Binaries will be in `bin/`.
 You must have Go 1.24+ installed.
 Most Linux/macOS distributions have this.
 Go to https://go.dev/doc/install to learn more.
+You need OpenAPI compiler: https://github.com/oapi-codegen/oapi-codegen
 
 Then:
 
@@ -79,15 +89,6 @@ Then:
 This SDK is based on bsubio.io OpenAPI specification available at:
 
     https://app.bsub.io/static/openapi.yaml
-
-You need OpenAPI compiler: https://github.com/oapi-codegen/oapi-codegen
-Just install it with:
-
-    make setup
-
-To regenerate the code from public OpenAPI specs:
-
-    make regen
 
 ## License
 

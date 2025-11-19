@@ -103,11 +103,38 @@ type ProcessingType struct {
 	// Description Human-readable description
 	Description *string `json:"description,omitempty"`
 
-	// Name Type identifier used when creating jobs
+	// Example Example usage information
+	Example *struct {
+		// Cmd Example command
+		Cmd *string `json:"cmd,omitempty"`
+
+		// Desc Example description
+		Desc *string `json:"desc,omitempty"`
+	} `json:"example,omitempty"`
+
+	// Input Input format information
+	Input *struct {
+		// MimeIn Accepted input MIME types
+		MimeIn *[]string `json:"mime_in,omitempty"`
+	} `json:"input,omitempty"`
+
+	// Name Human-readable name
 	Name *string `json:"name,omitempty"`
 
-	// Timeout Processing timeout in seconds
-	Timeout *int `json:"timeout,omitempty"`
+	// Output Output format information
+	Output *struct {
+		// Display Display format hint
+		Display *string `json:"display,omitempty"`
+
+		// Ext Output file extension
+		Ext *string `json:"ext,omitempty"`
+
+		// MimeOut Output MIME types
+		MimeOut *[]string `json:"mime_out,omitempty"`
+	} `json:"output,omitempty"`
+
+	// Type Type identifier used when creating jobs
+	Type *string `json:"type,omitempty"`
 }
 
 // JobId defines model for JobId.

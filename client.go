@@ -3,11 +3,13 @@ package bsubio
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -27,10 +29,44 @@ type Config struct {
 	HTTPClient *http.Client
 }
 
+// configFile represents the structure of ~/.config/bsubio/config.json
+type configFile struct {
+	APIKey  string `json:"api_key"`
+	BaseURL string `json:"base_url"`
+}
+
+// LoadConfig loads configuration from ~/.config/bsubio/config.json or BSUBIO_API_KEY env var
+// Returns an empty Config{} if neither is found (no error)
+func LoadConfig() Config {
+	config := Config{}
+
+	// Try to load from config file first
+	homeDir, err := os.UserHomeDir()
+	if err == nil {
+		configPath := filepath.Join(homeDir, ".config", "bsubio", "config.json")
+		data, err := os.ReadFile(configPath)
+		if err == nil {
+			var cf configFile
+			if err := json.Unmarshal(data, &cf); err == nil {
+				config.APIKey = cf.APIKey
+				config.BaseURL = cf.BaseURL
+				return config
+			}
+		}
+	}
+
+	// Fall back to environment variable
+	if apiKey := os.Getenv("BSUBIO_API_KEY"); apiKey != "" {
+		config.APIKey = apiKey
+	}
+
+	return config
+}
+
 // NewBsubClient creates a new BSUB.IO API client
 func NewBsubClient(config Config) (*BsubClient, error) {
 	if config.APIKey == "" {
-		return nil, fmt.Errorf("API key is required")
+		return nil, fmt.Errorf("bsub.io API key not found. Run 'bsubio register' or set BSUBIO_API_KEY")
 	}
 
 	baseURL := config.BaseURL
