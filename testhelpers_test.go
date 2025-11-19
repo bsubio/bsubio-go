@@ -15,13 +15,6 @@ const (
 	TestModeProduction TestMode = "production"
 )
 
-// TestConfig holds configuration for test execution
-type TestConfig struct {
-	Mode    TestMode
-	APIKey  string
-	BaseURL string
-}
-
 // BsubConfig represents the structure of ~/.config/bsubio/config.json
 type BsubConfig struct {
 	APIKey  string `json:"api_key"`

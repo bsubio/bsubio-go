@@ -13,6 +13,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// Test constants
+const (
+	testHTTPTimeout    = 10 * time.Second
+	testContextTimeout = 100 * time.Millisecond
+)
+
 // TestNewBsubClient tests client initialization
 func TestNewBsubClient(t *testing.T) {
 	tests := []struct {
@@ -40,7 +46,7 @@ func TestNewBsubClient(t *testing.T) {
 			name: "valid config with custom HTTP client",
 			config: Config{
 				APIKey:     "test-api-key",
-				HTTPClient: &http.Client{Timeout: 10 * time.Second},
+				HTTPClient: &http.Client{Timeout: testHTTPTimeout},
 			},
 			wantErr: false,
 		},
@@ -204,7 +210,7 @@ func TestWaitForJob(t *testing.T) {
 		job.Status = &status
 
 		// Create context with short timeout
-		ctxWithTimeout, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+		ctxWithTimeout, cancel := context.WithTimeout(context.Background(), testContextTimeout)
 		defer cancel()
 
 		finalJob, err := client.WaitForJob(ctxWithTimeout, jobID)

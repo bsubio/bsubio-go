@@ -19,5 +19,10 @@ jobs:
     - name: Download dependencies
       run: go mod download
 
+    - name: Run golangci-lint
+      uses: golangci/golangci-lint-action@v6
+      with:
+        version: latest
+
     - name: Run tests with coverage
       run: go test ./... -cover

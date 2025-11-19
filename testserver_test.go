@@ -1,10 +1,12 @@
 package bsubio
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -15,16 +17,18 @@ import (
 // MockServer provides a mock bsub.io server for testing
 type MockServer struct {
 	*httptest.Server
-	jobs   map[uuid.UUID]*Job
-	mu     sync.RWMutex
-	delays map[string]time.Duration // Optional delays for specific operations
+	jobs        map[uuid.UUID]*Job
+	uploadedData map[uuid.UUID][]byte // Store uploaded data for calculating results
+	mu          sync.RWMutex
+	delays      map[string]time.Duration // Optional delays for specific operations
 }
 
 // NewMockServer creates a new mock bsub.io server
 func NewMockServer() *MockServer {
 	ms := &MockServer{
-		jobs:   make(map[uuid.UUID]*Job),
-		delays: make(map[string]time.Duration),
+		jobs:         make(map[uuid.UUID]*Job),
+		uploadedData: make(map[uuid.UUID][]byte),
+		delays:       make(map[string]time.Duration),
 	}
 
 	ms.Server = httptest.NewServer(http.HandlerFunc(ms.handler))
@@ -112,10 +116,23 @@ func (ms *MockServer) handleCreateJob(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ms *MockServer) handleUpload(w http.ResponseWriter, r *http.Request) {
-	// Extract job ID from path: /v1/upload/{uploadToken}
+	// Extract job ID from path: /v1/upload/{jobId}
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 4 {
 		http.Error(w, "Invalid upload path", http.StatusBadRequest)
+		return
+	}
+
+	jobID, err := uuid.Parse(parts[3])
+	if err != nil {
+		http.Error(w, "Invalid job ID", http.StatusBadRequest)
+		return
+	}
+
+	// Extract token from query parameters
+	uploadToken := r.URL.Query().Get("token")
+	if uploadToken == "" {
+		http.Error(w, "Missing upload token", http.StatusBadRequest)
 		return
 	}
 
@@ -126,18 +143,27 @@ func (ms *MockServer) handleUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Update job status to loaded
+	// Verify job exists and token matches
 	ms.mu.Lock()
-	for _, job := range ms.jobs {
-		if job.UploadToken != nil {
-			status := JobStatusLoaded
-			job.Status = &status
-			dataSize := int64(len(data))
-			job.DataSize = &dataSize
-			break
-		}
+	defer ms.mu.Unlock()
+
+	job, exists := ms.jobs[jobID]
+	if !exists {
+		http.Error(w, "Job not found", http.StatusNotFound)
+		return
 	}
-	ms.mu.Unlock()
+
+	if job.UploadToken == nil || *job.UploadToken != uploadToken {
+		http.Error(w, "Invalid upload token", http.StatusUnauthorized)
+		return
+	}
+
+	// Update job status and store data
+	status := JobStatusLoaded
+	job.Status = &status
+	dataSize := int64(len(data))
+	job.DataSize = &dataSize
+	ms.uploadedData[jobID] = data
 
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(map[string]interface{}{
@@ -225,7 +251,7 @@ func (ms *MockServer) handleGetJob(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ms *MockServer) handleGetOutput(w http.ResponseWriter, r *http.Request) {
-	// For mock server, return simple output based on job type
+	// For mock server, return output based on job type and actual uploaded data
 	parts := strings.Split(r.URL.Path, "/")
 	var jobID uuid.UUID
 	for i, part := range parts {
@@ -240,6 +266,7 @@ func (ms *MockServer) handleGetOutput(w http.ResponseWriter, r *http.Request) {
 
 	ms.mu.RLock()
 	job, exists := ms.jobs[jobID]
+	uploadedData := ms.uploadedData[jobID]
 	ms.mu.RUnlock()
 
 	if !exists || job.Status == nil || *job.Status != JobStatusFinished {
@@ -247,12 +274,23 @@ func (ms *MockServer) handleGetOutput(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Generate mock output based on job type
+	// Generate output based on job type
 	var output string
 	if job.Type != nil {
 		switch *job.Type {
 		case "test/linecount":
-			output = "5"
+			// Calculate actual line count from uploaded data
+			if len(uploadedData) == 0 {
+				output = "0"
+			} else {
+				// Count newlines and add 1 (last line might not have newline)
+				lineCount := bytes.Count(uploadedData, []byte("\n"))
+				// If data doesn't end with newline, we have one more line
+				if uploadedData[len(uploadedData)-1] != '\n' {
+					lineCount++
+				}
+				output = strconv.Itoa(lineCount)
+			}
 		default:
 			output = "mock output"
 		}
