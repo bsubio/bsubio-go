@@ -68,7 +68,7 @@ func main() {
 	// Example 3: Process a file (if provided as argument)
 	if len(os.Args) > 1 {
 		filePath := os.Args[1]
-		jobType := "passthrough" // Simple passthrough for demo
+		jobType := "test/linecount" // Simple test job for demo
 		if len(os.Args) > 2 {
 			jobType = os.Args[2]
 		}
