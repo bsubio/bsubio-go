@@ -90,6 +90,35 @@ This SDK is based on bsubio.io OpenAPI specification available at:
 
     https://app.bsub.io/static/openapi.yaml
 
+## Testing
+
+The SDK includes a comprehensive test suite that supports two testing modes:
+
+### Mock Tests (Default)
+
+Run tests against an in-memory mock server (fast and deterministic):
+
+```bash
+go test -v -cover
+```
+
+### Production Tests
+
+Run tests against the real bsub.io API to verify integration:
+
+```bash
+# Using environment variable
+export BSUB_TEST_MODE=production
+export BSUB_API_KEY=your_api_key_here
+go test -v
+
+# Or using config file (~/.config/bsubio/config.json)
+export BSUB_TEST_MODE=production
+go test -v
+```
+
+Production tests verify that the SDK works correctly with the actual API and are useful for catching API changes.
+
 ## License
 
 MIT
