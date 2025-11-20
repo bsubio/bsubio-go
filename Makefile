@@ -6,7 +6,7 @@ build:
 	go build
 
 test:
-	go test ./...
+	go test ./... -v
 
 ex:
 	mkdir -p bin/
